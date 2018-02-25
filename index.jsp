@@ -22,8 +22,6 @@ String topicName = (String) session.getAttribute("buildAnotherCollage");
 			else {
 				// put old collage in previous collages
 				
-				
-				
 				// change the collage
 				
 				title += newTopic;
