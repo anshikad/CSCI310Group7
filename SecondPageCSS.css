@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+p{
+	text-align: center;
+	font-size: 24px;
+	color: black;
+}
+Build Another Collage{
+	background-color: 6A6968;
+}
+buildCollageAttributes{
+	text-align: center;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: BEBBBB;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: BEBBBB;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: BEBBBB;
+}
+
+div.scrollmenu {
+    background-color: white;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+div.scrollmenu a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    width: 50px;
+}
+
+div.scrollmenu a:hover {
+    background-color: #777;
+}
