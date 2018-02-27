@@ -19,134 +19,102 @@ import java.io.Reader.*;
 
 public class Server {
 	private List<BufferedImage> imagesList;
+	private List<BufferedImage> prevCollageList;
+	private BufferedImage prevCollage;
 	public Server() {
 		imagesList = new LinkedList<>();
+		prevCollageList = new LinkedList<>();
+		prevCollage = null;//IMPORTANT to initialize it to null
 	}
-	private void search() throws MalformedURLException, URISyntaxException, IOException{
+	public void search() throws MalformedURLException, URISyntaxException, IOException{
+		  //Google api credentials and parameters
 		  String key = "AIzaSyDFyaeFTiOvijzl7-2OTS3rcPeMYb2S0Ts";
-		  String qry = "apple"; // search key word
+		  String qry = "bottles"; // search key word
 		  String cx  = "012772727063918838439:2cwicvp-wsk";
-		  //String fileType = "png,jpg";
-		  //String imgType  = "";
 		  String searchType = "image";
-		  //int start   = index;
-		  //int indexReturn  = index;
-		  //println("START INDEX "+indexReturn);
-		  //URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +qry+ "&fileType="+fileType+"&imgType="+imgType+"&searchType="+searchType+"&start="+start+"&num=10&alt=json");
-		  //for (int i = 0; i < 3; i++) {
 		  int indexResult = 1;
 		  int numImagesSaved = 0;
+		  //CONDITION used to make sure we grab exactly 30 images
 		  while (numImagesSaved < 30) {
-			  URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +qry + "&searchType="+searchType+"&start="+indexResult + "&num=1&fileType=jpeg");//);
-			  //GET https://www.googleapis.com/customsearch/v1?key=INSERT_YOUR_API_KEY&cx=017576662512468239146:omuauf_lfve&q=lectures
-			  // URL url =  new URL("https://www.googleapis.com/customsearch/v1?q=nebulas&cx=001609494755766729867%3Aez8fjbajppw&key=AIzaSyDoWXkPTvfnzCjmyauvDaRjVyTPpxxYIvM&alt=json");
+			  //all parameters are put at the end of the url
+			  URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +qry + "&searchType="+searchType+"&start="+indexResult + "&num=1");//);
 			  HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			  conn.setRequestMethod("GET");
 			  conn.setRequestProperty("Accept", "application/json");
 			  BufferedReader br = new BufferedReader(new InputStreamReader ( ( conn.getInputStream() ) ) );
-	//		  GResults results = new Gson().fromJson(br, GResults.class);
-	//		  System.out.println(results.getUrl());
 			  String output;
-			  //System.out.println("Output from Server .... \n");
 			  while ((output = br.readLine()) != null) {
-			        if(output.contains("\"link\": \"")){                
+			        if(output.contains("\"link\": \"")){   
+			        		//get ONE link 
 			            String link=output.substring(output.indexOf("\"link\": \"")+("\"link\": \"").length(), output.indexOf("\","));
-			            System.out.println(link);       //Will print the google search links
+			            //form ONE url from link
 			            URL imageURL = new URL(link);
 			            try {
+			            		//Add to the image list
 			            		imagesList.add(ImageIO.read(imageURL));
+			            		//if the image just stored is NOT null, increment the counter
 			            		if (imagesList.get(imagesList.size() - 1) != null) {
 			            			numImagesSaved++;
 			            		}
+			            		//if the image just stored is null, remove this null image and do NOT increment the counter
 			            		else {
 			            			imagesList.remove(imagesList.size() - 1);
 			            		}
 			            } catch (Exception InputMismachException) {
 			            		System.out.println("Exception catched");    
 			            }
-			            System.out.println(indexResult);
-			            System.out.println(numImagesSaved);
 			        }     
 			  }
+			  //after 
 			  indexResult++;
 			  conn.disconnect();
 		  }
 	}
-	private void outputImages() {
-		if (imagesList.size() == 30) {
-			for (int i = 0; i < 30; i++) {
-				try {
-					//if (imagesList.get(i) != null)
-					ImageIO.write(imagesList.get(i), "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/image" + i + ".jpg"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-		}
-	}
-	private  BufferedImage joinBufferedImage(BufferedImage img1, BufferedImage img2) {
-		int offset = 2;
-	    int width = 1800;
-	    int height = 1200;
+	public  BufferedImage joinBufferedImage() {
 	    BufferedImage newImage = new BufferedImage(1800, 900,
 	    		BufferedImage.TYPE_INT_RGB);
 	    Graphics2D g2 = newImage.createGraphics();
-	   // Color oldColor = g2.getColor();
-	   // g2.setPaint(Color.BLACK);
-	    //g2.fillRect(0, 0, width, height);
-	    //g2.setColor(oldColor);
+	    //The first row
 	    for (int i = 0; i < 10; i++) {
 	    		g2.drawImage(this.imagesList.get(i), 0 + 180*i, 0, 180 + i*180, 300,0,0, this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
 	    }
+	    //The second row
 	    for (int i = 0; i < 10; i++) {
     			g2.drawImage(this.imagesList.get(10 + i), 0 + 180*i, 300, 180 + i*180, 600,0,0, this.imagesList.get(10 + i).getWidth(), this.imagesList.get(10 + i).getHeight(), null);
 	    }
+	    //The third row
 	    for (int i = 0; i < 10; i++) {
 			g2.drawImage(this.imagesList.get(20 + i), 0 + 180*i, 600, 180 + i*180, 900,0,0, this.imagesList.get(20 + i).getWidth(), this.imagesList.get(20 + i).getHeight(), null);
 	    }
-	    //g2.drawImage(img2, img1.getWidth() + offset, 0, null);
 	    g2.dispose();
+	    
+	    //To form previous collage list
+	    if (prevCollage != null) {//if prevCollage is null, it's the first search that does not have previous collages
+	    		prevCollageList.add(prevCollage);
+	    }
+	    prevCollage = newImage;
 	    return newImage;
 	}
 	
-	private  BufferedImage concatImages(List<BufferedImage> imagesList) {
-		int heightTotal = 0;
-        for(int j = 0; j < imagesList.size(); j++) {
-            heightTotal += imagesList.get(j).getHeight();
-        }
-        int heightCurr = 0;
-        BufferedImage concatImage = new BufferedImage(1000, heightTotal, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = concatImage.createGraphics();
-        for(int j = 0; j < imagesList.size(); j++) {
-            g2d.drawImage(imagesList.get(j), 0, heightCurr, null);
-            heightCurr += imagesList.get(j).getHeight();
-        }
-        g2d.dispose();
-        return concatImage;
+	//IMPORTANT after each joinBufferedImage() called, getPrevCollageList() should be called immediately to update the previous collages
+	public List<BufferedImage> getPrevCollageList() {
+		return prevCollageList;
 	}
+	
 	public static void main(String[] args) {
 		Server s0 = new Server();
 		try {
+			//Grab 30 images
 			s0.search();
 		} catch (URISyntaxException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		s0.outputImages();
-		BufferedImage joinedImg = s0.joinBufferedImage(s0.imagesList.get(0), s0.imagesList.get(1));
+		//Build collage
+		BufferedImage joinedImg = s0.joinBufferedImage();
 		try {
+			//save it to local
 			ImageIO.write(joinedImg, "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/imageJOINED" + ".jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		BufferedImage concatedImg = s0.concatImages(s0.imagesList);
-		try {
-			ImageIO.write(concatedImg, "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/imageCONCATED" + ".jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
