@@ -9,9 +9,9 @@
 	</head>
 	<body style = "background-color: #D3D3D3">
 		<div class = "form" style = "background-color: #D3D3D3">
-			<form name = "Form1" action="/ManageButtonPress.jsp" method="GET">
-	  			<input type="text" name="buildCollage" placeholder = "Enter topic" style = "font-size: 24px; border:3px solid grey" required>
-	  			<input type = "submit" value = "Build Collage" style = "font-size: 24px; padding: 4px 2px; border: none;  background-color:grey; color: white">
+			<form name = "Form1" action="driver" method="GET">
+	  			<input type="text" name="buildCollage" placeholder = "Enter topic" style = "font-size: 18px; border:3px solid grey" required>
+	  			<input type = "submit" value = "Build Collage" style = "font-size: 18px; padding: 4px 2px; border: none;  background-color:grey; color: white">
 			</form>
 		</div>
 	</body>
