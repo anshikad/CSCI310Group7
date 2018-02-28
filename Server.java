@@ -22,12 +22,21 @@ public class Server {
 	private List<BufferedImage> imagesList;
 	private List<BufferedImage> prevCollageList;
 	private BufferedImage prevCollage;
-	public Server() {
+	private static Server instance;
+	//private String topic;
+	private Server() {
 		imagesList = new LinkedList<>();
 		prevCollageList = new LinkedList<>();
-		prevCollage = null;//IMPORTANT to initialize it to null
+		prevCollage = null;//IMPORTANT to initialize it to null	
+	}
+	public static Server getInstance() {
+		if(instance == null) {
+	         instance = new Server();
+	      }
+	      return instance;
 	}
 	public void search(String topic) throws MalformedURLException, URISyntaxException, IOException{
+		  //this.topic = topic;
 		  //Google api credentials and parameters
 		  String key = "AIzaSyDFyaeFTiOvijzl7-2OTS3rcPeMYb2S0Ts";
 		  String qry = topic; // search key word
@@ -71,6 +80,7 @@ public class Server {
 			  conn.disconnect();
 		  }
 	}
+	//DISCARDED
 	public  BufferedImage joinBufferedImage() {
 	    BufferedImage newImage = new BufferedImage(1800, 900,
 	    		BufferedImage.TYPE_INT_RGB);
@@ -98,15 +108,11 @@ public class Server {
 	}
 	/*Scale up one image as background. Rest of images are scaled down to display*/
 	public BufferedImage buildCollage() {
-		BufferedImage collage = new BufferedImage(1800, 900,BufferedImage.TYPE_INT_RGB);
+		//BufferedImage collage = new BufferedImage(1800, 900,BufferedImage.TYPE_INT_RGB);
+		BufferedImage collage = new BufferedImage(2771, 1385, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = collage.createGraphics();
 		//Make the first image background of the collage
 		g.drawImage(this.imagesList.get(0), 0, 0, 1800, 900, 0, 0, this.imagesList.get(0).getWidth(), this.imagesList.get(0).getHeight(), null);
-		//g.drawImage(this.imagesList.get(1), 0, 0, 19 + 235, 85 + 119, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
-		//g.drawImage(this.imagesList.get(1), 0, 0, 19.375, 84.8, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
-//		for (int i = 1; i < 8; i++) {
-//			g.drawImage(this.imagesList.get(i), 19 + 254*(i-1), 85, 254 + 254*(i-1), 85 + 119, 0, 0, this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
-//		}
 		for (int i = 0; i < 30; i++) {
 			//Set up the small image with no image yet
 			BufferedImage smallImage = new BufferedImage(241, 125,BufferedImage.TYPE_INT_RGB);
@@ -116,16 +122,16 @@ public class Server {
 			gToScaleDown.drawImage(this.imagesList.get(i), 3, 3, 238, 122, 0, 0,
 					this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);//put an image on background
 			gToScaleDown.dispose();
+			//Create transformation for the scaled down images
 			AffineTransform tx = new AffineTransform();
 			double locationX = smallImage.getWidth() / 2;//find center of an image
 			double locationY = smallImage.getHeight() / 2;
 			//IMPORTANT translate must be before rotate 
-			tx.translate(Math.random()*1800, Math.random()* 900);
+			tx.translate(Math.random()*1800, Math.random()* 900);//Move the small images away from the origin
 			tx.rotate(Math.toRadians (-45 + Math.random()*90), locationX, locationY);//rotate around the center
 			g.drawImage(smallImage, tx, null);//draw with transformation 
-			//g.drawImage(smallImage, 19 + 254*(i-1), 85*2 + 119, 254 + 254*(i-1), 85*2 + 119*2, 0, 0, smallImage.getWidth(), smallImage.getHeight(), null);
 		}	
-		g.dispose();
+		g.dispose();//Release all resources used by g
 		//for local test
 		try {
 			ImageIO.write(collage, "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/collage" + ".jpg"));
@@ -163,7 +169,7 @@ public class Server {
 		Server s0 = new Server();
 		try {
 			//Grab 30 images
-			s0.search();
+			s0.search(args[1]);//Parameter is a place holder.
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
