@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +30,7 @@ public class Server {
 	public void search() throws MalformedURLException, URISyntaxException, IOException{
 		  //Google api credentials and parameters
 		  String key = "AIzaSyDFyaeFTiOvijzl7-2OTS3rcPeMYb2S0Ts";
-		  String qry = "bottles"; // search key word
+		  String qry = "dog"; // search key word
 		  String cx  = "012772727063918838439:2cwicvp-wsk";
 		  String searchType = "image";
 		  int indexResult = 1;
@@ -95,7 +96,75 @@ public class Server {
 	    prevCollage = newImage;
 	    return newImage;
 	}
-	
+	/*Scale up one image as background. Rest of images are scaled down to display*/
+	public BufferedImage buildCollage() {
+		BufferedImage collage = new BufferedImage(1800, 900,BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = collage.createGraphics();
+		//Make the first image background of the collage
+		g.drawImage(this.imagesList.get(0), 0, 0, 1800, 900, 0, 0, this.imagesList.get(0).getWidth(), this.imagesList.get(0).getHeight(), null);
+		//g.drawImage(this.imagesList.get(1), 0, 0, 19 + 235, 85 + 119, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
+		//g.drawImage(this.imagesList.get(1), 0, 0, 19.375, 84.8, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
+		for (int i = 1; i < 8; i++) {
+			g.drawImage(this.imagesList.get(i), 19 + 254*(i-1), 85, 254 + 254*(i-1), 85 + 119, 0, 0, this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
+		}
+		for (int i = 1; i < 8; i++) {
+			BufferedImage smallImage = new BufferedImage(235, 119,BufferedImage.TYPE_INT_RGB);
+			Graphics2D gToScaleDown = smallImage.createGraphics();
+			gToScaleDown.drawImage(this.imagesList.get(7+i), 0, 0, 235, 119, 0, 0,
+					this.imagesList.get(7+i).getWidth(), this.imagesList.get(7+i).getHeight(), null);
+			gToScaleDown.dispose();
+			AffineTransform tx = new AffineTransform();
+			double locationX = smallImage.getWidth() / 2;
+			double locationY = smallImage.getHeight() / 2;
+			//IMPORTANT translate must be before rotate 
+			tx.translate(Math.random()*1600, Math.random()* 600);
+			tx.rotate(Math.toRadians (-45 + Math.random()*90), locationX, locationY);
+			
+			g.drawImage(smallImage, tx, null);
+			//g.drawImage(smallImage, 19 + 254*(i-1), 85*2 + 119, 254 + 254*(i-1), 85*2 + 119*2, 0, 0, smallImage.getWidth(), smallImage.getHeight(), null);
+		}
+//		for (int i = 1; i < 8; i++) {
+//			BufferedImage rotatedImage = new BufferedImage(this.imagesList.get(7+i).getWidth(), this.imagesList.get(7+i).getHeight(),BufferedImage.TYPE_INT_RGB);
+//			Graphics2D gRotated = rotatedImage.createGraphics();
+//			double rotationRequired = Math.toRadians (-45 + Math.random()*90);
+//			double locationX = this.imagesList.get(7+i).getWidth() / 2;
+//			double locationY = this.imagesList.get(7+i).getHeight() / 2;
+//			AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+//			gRotated.drawImage(this.imagesList.get(7+i), tx, null);
+//			gRotated.dispose();
+//			g.drawImage(rotatedImage, 19 + 254*(i-1), 85*2 + 119, 254 + 254*(i-1), 85*2 + 119*2, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), null);
+//
+//		}
+		
+//		for (int i = 1; i < 8; i++) {
+//			g.drawImage(this.imagesList.get(7+i), 19 + 254*(i-1), 85*2 + 119, 254 + 254*(i-1), 85*2 + 119*2, 0, 0, this.imagesList.get(7+i).getWidth(), this.imagesList.get(7+i).getHeight(), null);
+//		}
+		
+		
+		g.dispose();
+		try {
+			ImageIO.write(collage, "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/collage" + ".jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	private void outputImages() {
+		if (imagesList.size() == 30) {
+			for (int i = 0; i < 30; i++) {
+				try {
+					//if (imagesList.get(i) != null)
+					ImageIO.write(imagesList.get(i), "jpg",new File("/Users/gongchen/Desktop/310imagesFolder/image" + i + ".jpg"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+	}
 	//IMPORTANT after each joinBufferedImage() called, getPrevCollageList() should be called immediately to update the previous collages
 	public List<BufferedImage> getPrevCollageList() {
 		return prevCollageList;
@@ -109,6 +178,8 @@ public class Server {
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 		}
+		s0.outputImages();
+		s0.buildCollage();
 		//Build collage
 		BufferedImage joinedImg = s0.joinBufferedImage();
 		try {
