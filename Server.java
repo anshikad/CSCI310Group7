@@ -23,7 +23,10 @@ public class Server {
 	private List<BufferedImage> prevCollageList;
 	private BufferedImage prevCollage;
 	private static Server instance;
-	//private String topic;
+	private String topic;
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
 	private Server() {
 		imagesList = new LinkedList<>();
 		prevCollageList = new LinkedList<>();
@@ -32,14 +35,14 @@ public class Server {
 	public static Server getInstance() {
 		if(instance == null) {
 	         instance = new Server();
-	      }
-	      return instance;
+	    }
+	    return instance;
 	}
-	public void search(String topic) throws MalformedURLException, URISyntaxException, IOException{
+	public void search() throws MalformedURLException, URISyntaxException, IOException{
 		  //this.topic = topic;
 		  //Google api credentials and parameters
 		  String key = "AIzaSyDFyaeFTiOvijzl7-2OTS3rcPeMYb2S0Ts";
-		  String qry = topic; // search key word
+		  String qry = this.topic; // search key word
 		  String cx  = "012772727063918838439:2cwicvp-wsk";
 		  String searchType = "image";
 		  int indexResult = 1;
