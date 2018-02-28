@@ -104,20 +104,21 @@ public class Server {
 		g.drawImage(this.imagesList.get(0), 0, 0, 1800, 900, 0, 0, this.imagesList.get(0).getWidth(), this.imagesList.get(0).getHeight(), null);
 		//g.drawImage(this.imagesList.get(1), 0, 0, 19 + 235, 85 + 119, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
 		//g.drawImage(this.imagesList.get(1), 0, 0, 19.375, 84.8, 0, 0, this.imagesList.get(1).getWidth(), this.imagesList.get(1).getHeight(), null);
-		for (int i = 1; i < 8; i++) {
-			g.drawImage(this.imagesList.get(i), 19 + 254*(i-1), 85, 254 + 254*(i-1), 85 + 119, 0, 0, this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
-		}
-		for (int i = 1; i < 8; i++) {
+//		for (int i = 1; i < 8; i++) {
+//			g.drawImage(this.imagesList.get(i), 19 + 254*(i-1), 85, 254 + 254*(i-1), 85 + 119, 0, 0, this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
+//		}
+		for (int i = 0; i < 30; i++) {
+			//Set up the small image with no image yet
 			BufferedImage smallImage = new BufferedImage(235, 119,BufferedImage.TYPE_INT_RGB);
 			Graphics2D gToScaleDown = smallImage.createGraphics();
-			gToScaleDown.drawImage(this.imagesList.get(7+i), 0, 0, 235, 119, 0, 0,
-					this.imagesList.get(7+i).getWidth(), this.imagesList.get(7+i).getHeight(), null);
+			gToScaleDown.drawImage(this.imagesList.get(i), 0, 0, 235, 119, 0, 0,
+					this.imagesList.get(i).getWidth(), this.imagesList.get(i).getHeight(), null);
 			gToScaleDown.dispose();
 			AffineTransform tx = new AffineTransform();
 			double locationX = smallImage.getWidth() / 2;
 			double locationY = smallImage.getHeight() / 2;
 			//IMPORTANT translate must be before rotate 
-			tx.translate(Math.random()*1600, Math.random()* 600);
+			tx.translate(Math.random()*1800, Math.random()* 900);
 			tx.rotate(Math.toRadians (-45 + Math.random()*90), locationX, locationY);
 			
 			g.drawImage(smallImage, tx, null);
