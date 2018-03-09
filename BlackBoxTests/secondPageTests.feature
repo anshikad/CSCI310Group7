@@ -25,4 +25,15 @@ Scenario: Second page formatting
 	And the Input Box prompt reads "Enter topic"
 
 	And the Input Box background color is white
+	
+	And the Export Collage button is dark gray
 
+	And the Export Collage button text color is white
+
+	And the Export Collage button label reads "Export Collage"
+
+	And the Collage width is not less than 800 pixels
+
+	And the Collage height is not less than 600 pixels
+
+	And the Collage is centered in the page ""
