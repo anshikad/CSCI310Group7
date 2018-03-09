@@ -42,3 +42,26 @@ Then(/^the Input Box background color is white$/) do
   page.find_by_id('topicBox').native.css_value('background-color').should == "rgba(255, 255, 255, 1)"
 end
 
+Then(/^the Export Collage button is dark gray$/) do
+  page.find_by_id('exportCollageButton').native.css_value('background-color').should == "rgba(128, 128, 128, 1)"
+end
+
+Then(/^the Export Collage button text color is white$/) do
+  page.find_by_id('exportCollageButton').native.css_value('color').should == "rgba(255, 255, 255, 1)"
+end
+
+Then(/^the Export Collage button label reads "([^"]*)"$/) do |arg1|
+  page.find_by_id('exportCollageButton')['value'].should have_content arg1
+end
+
+Then(/^the Collage is centered in the page "([^"]*)"$/) do |arg1|
+  page.find_by_id('exportCollage').native.css_value('align').should == arg1
+end
+
+Then(/^the Collage width is not less than (\d+) pixels$/) do |arg1|
+  page.find_by_id('exportCollage')['width'].should >= arg1
+end
+
+Then(/^the Collage height is not less than (\d+) pixels$/) do |arg1|
+  page.find_by_id('exportCollage')['height'].should >= arg1
+end
