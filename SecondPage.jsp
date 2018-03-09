@@ -6,12 +6,12 @@
 <%@page import ="java.awt.image.BufferedImage" %>
 <%@page import="javax.imageio.ImageIO"%>
 <%@page import="java.io.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <% 
 String topicName = (String) session.getAttribute("topic");
+String error = (String) session.getAttribute("errorMessage");
 BufferedImage collage = (BufferedImage)session.getAttribute("currentCollage");
-//BufferedImage collage = ImageIO.read(new File("/Users/anshikadubey/Desktop/310Test.jpg"));
 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 ImageIO.write(collage, "jpg", baos);
 baos.flush();
@@ -45,16 +45,33 @@ for(BufferedImage image : previousCollages){
           window.location.href = img.src.replace('image/jpg', 'image/octet-stream');
          };
      };
-	</script>
-	<script>
-		function move(){
+     
+		function move(i){
+			var previousCollageImg = document.getElementById(i);
+			var temp = previousCollageImg.src;
+			previousCollageImg.src = "data:image/jpg;base64," + "<%=b64%>";
+			var c = document.getElementById("exportCollage");
+			c.src = temp;
+			var newTopic = "<%=topicName%>";
+			
 			
 		}
 	</script>
 	<body>
 		<p id="p1">Collage for topic <%= topicName %></p>
 		<div id = "collageImage">
-			<center><img src="data:image/jpg;base64, <%=b64%>" id = "exportCollage" width="500" height="250" style="margin: 0px 20px"/></center>
+			<%
+				if(error != null){
+					%>
+						<center><%=error%></center>
+					<%
+				}
+				else{
+					%>
+					<center><img src="data:image/jpg;base64, <%=b64%>" align = "center" id = "exportCollage" width="500" height="250" style="margin: 0px 20px"/></center>
+				<%
+				}
+			%>
 		</div>
 	</body>
 	
@@ -64,17 +81,18 @@ for(BufferedImage image : previousCollages){
 	<body class = buildCollegeAttributes>
 		<div style="text-align:center">
 			<form action="driver" method="GET">
-	  			<input type="text" id = "topicBox" name="buildCollage" placeholder = "Enter Topic" style = "border:3px solid grey" required>
-	  			<input type = "submit" value = "Build Another Collage" style = "background-color:grey; color: white " >
+	  			<input type="text" id = "topicBox" name="buildCollage" placeholder = "Enter topic" style = "border:3px solid grey" required>
+	  			<input type = "submit" id = "buildCollageBtn" value = "Build Another Collage" style = "background-color:grey; color: white " >
 	  			<input type = "button" id = "exportCollageButton" value = "Export Collage" style = "background-color:grey; color: white" >	
 			</form>
 		</div>
 	</body>
- 	<div class="scrollmenu">
+ 	<div id = "gallery" class="scrollmenu">
 	<%
-		for(String previousb64: previousCollagesB64){
+		for(int i = 0; i < previousCollagesB64.size(); i++){
 		%>
-		  <img src="data:image/jpg;base64, <%=previousb64%>" onclick="move();" width="100" height="100" style="margin: 0px 20px"/>
+		  <img id = "<%=i%>" src="data:image/jpg;base64, <%=previousCollagesB64.get(i)%>" onclick="move(<%=i%>);" width="100" height="100" style="margin: 0px 20px"/>
+		  
 		<%	
 		}
 	%>
